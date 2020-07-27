@@ -807,7 +807,7 @@ function init() {
     newsql.innerText = "新建";
     var tip = document.createElement("span");
     tip.className = "tooltiptext";
-    tip.innerHTML = "新建数据库脚<br>本";
+    tip.innerHTML = "新建数学函数";
     newsql.appendChild(tip);
 
     newsql.onclick = function () {
@@ -848,7 +848,7 @@ function init() {
     opensql.innerText = "打开";
     var tip = document.createElement("span");
     tip.className = "tooltiptext";
-    tip.innerHTML = "从浏览器存储<br>中打开脚本";
+    tip.innerHTML = "从浏览器存储<br>中打开函数";
     opensql.appendChild(tip);
     opensql.onclick = function () {
         var posi = getAbsolutePosition(this);
@@ -866,7 +866,7 @@ function init() {
     saveto.innerText = "保存";
     var tip = document.createElement("span");
     tip.className = "tooltiptext";
-    tip.innerHTML = "保存脚本到浏<br>览器存储";
+    tip.innerHTML = "保存函数到浏<br>览器存储";
     saveto.appendChild(tip);
     saveto.onclick = function () {
         if (__FUNCTION_EDITOR__.title == null) {
@@ -879,7 +879,7 @@ function init() {
             main.appendChild(tb);
         } else {
             var name = __FUNCTION_EDITOR__.title;
-            var res = confirm("您确定覆盖保存脚本 " + name + " 吗?");
+            var res = confirm("您确定覆盖保存函数 " + name + " 吗?");
             if (res == true) {
                 var sql = __FUNCTION_EDITOR__.codeMirror.getValue();
                 if (name != "" && sql != "") {
@@ -888,7 +888,7 @@ function init() {
                     sqllist[name] = messageEncode(sql);
                     storage.setItem(__CONFIGS__.STORAGE.SCRIPTS, JSON.stringify(sqllist));
                 } else
-                    alert("脚本及脚本名称不能为空!");
+                    alert("函数及函数名称不能为空!");
             }
         }
     };
@@ -900,7 +900,7 @@ function init() {
     loadfile.innerText = "导入";
     var tip = document.createElement("span");
     tip.className = "tooltiptext";
-    tip.innerHTML = "导入外部脚本<br>文件";
+    tip.innerHTML = "导入外部函数<br>文件";
     loadfile.appendChild(tip);
     loadfile.onclick = function () {
         $("openfile").click();
@@ -913,7 +913,7 @@ function init() {
     saveas.innerText = "导出";
     var tip = document.createElement("span");
     tip.className = "tooltiptext";
-    tip.innerHTML = "脚本另存为文<br>本文件";
+    tip.innerHTML = "函数另存为文<br>本文件";
     saveas.appendChild(tip);
     saveas.onclick = function () {
         var blob = new Blob([str2ab(__FUNCTION_EDITOR__.codeMirror.getValue())], {type: "application/octet-stream"});
@@ -1274,7 +1274,7 @@ function init() {
    getFunctionConfigs($("paramContainer"));
 
     //#######################################
-    //配置脚本编辑器
+    //配置函数编辑器
     //#######################################
     __FUNCTION_EDITOR__.init($("Editer"));
     resize();
