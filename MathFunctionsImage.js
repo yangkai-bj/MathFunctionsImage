@@ -5,7 +5,11 @@ var __CONFIGS__ = {
 
  var __DATASET__ = {
      functions: [],
-     xRange:{min:-100, max:100, interval:1},
+     xRange:{
+         min: {name: "最小x值", value: -100},
+         max: {name: "最大x值", value: 100},
+         interval:{name: "x的间隔", value: 0.5},
+     },
      time: "",
      result: [],
      default: 0,
@@ -597,14 +601,13 @@ function execute() {
         __DATASET__["time"] = getNow();
         __DATASET__["result"] = [];
         var data = [];
-        for (var x = __DATASET__.xRange.min; x <= __DATASET__.xRange.max; x += __DATASET__.xRange.interval) {
-            var row = [x*100/100];
+        for (var x = __DATASET__.xRange.min.value; x <= __DATASET__.xRange.max.value; x += __DATASET__.xRange.interval.value) {
+            var row = [x];
             for (var s = 0; s < funs.length; s++) {
                 row.push(eval("(" + funs[s].toString() + ")"));
             }
             data.push(row);
         }
-        console.log(data);
         __DATASET__["result"].push(transferResultDataset(funs, data));
         if (__DATASET__["result"].length > 0) {
             __DATASET__["default"] = 0;
@@ -751,11 +754,52 @@ function sheet2blob(sheet, sheetName) {
 	return blob;
 }
 
+function getFunctionConfigs(m) {
+    m.type = "div";
+    m.className = "function-configs-Content";
+    m.id = "function-configs-Content";
+    for (var name in __DATASET__.xRange) {
+        var d = document.createElement("div");
+        d.style.cssFloat = "left";
+        d.style.width = "100%";
+        m.appendChild(d);
+        var s = document.createElement("span");
+        s.innerHTML = __DATASET__.xRange[name].name + ":";
+        d.appendChild(s);
+        if (typeof __DATASET__.xRange[name].options === "undefined") {
+            var input = document.createElement("input");
+            input.id = name;
+            input.className = "editinput";
+            input.value = __DATASET__.xRange[name].value;
+            input.onchange = function () {
+                __DATASET__.xRange[this.id].value = Number(this.value);
+            };
+            d.appendChild(input);
+        } else {
+            var input = document.createElement("select");
+            //input.style.cssFloat = "left";
+            input.id = name;
+            input.className = "editinput";
+            for (var i = 0; i < __DATASET__.xRange[name].options.length; i++) {
+                input.options.add(new Option(__DATASET__.xRange[name].options[i]));
+            }
+            input.value = __DATASET__.xRange[name].value;
+            input.onchange = function () {
+                __DATASET__.xRange[this.id].value = Number(this.value);
+            };
+            d.appendChild(input);
+        }
+    }
+    var c = document.createElement("div");
+    m.appendChild(c);
+}
+
 function init() {
     //#######################################
     //初始化SQL菜单
     //#######################################
-    var sqltools = $("sql-tools");
+    var sqltools = $("editer-tools");
+    var paramtools = $("params-tools");
 
     var newsql = document.createElement("div");
     newsql.type = "div";
@@ -809,7 +853,7 @@ function init() {
     opensql.onclick = function () {
         var posi = getAbsolutePosition(this);
         var tb = storageSqlDialog("", __FUNCTION_EDITOR__);
-        var main = $("page");
+        var main = $("container");
         tb.style.top = posi.top + "px";
         tb.style.lef = posi.left + "px";
         main.appendChild(tb);
@@ -829,7 +873,7 @@ function init() {
             var posi = getAbsolutePosition(this);
             var sql = __FUNCTION_EDITOR__.codeMirror.getValue();
             var tb = storageSqlDialog(sql, __FUNCTION_EDITOR__, "_TO_SAVE_");
-            var main = $("page");
+            var main = $("container");
             tb.style.top = posi.top + "px";
             tb.style.lef = posi.left + "px";
             main.appendChild(tb);
@@ -861,7 +905,7 @@ function init() {
     loadfile.onclick = function () {
         $("openfile").click();
     };
-    sqltools.appendChild(loadfile);
+    paramtools.appendChild(loadfile);
 
     var saveas = document.createElement("div");
     saveas.type = "div";
@@ -875,7 +919,7 @@ function init() {
         var blob = new Blob([str2ab(__FUNCTION_EDITOR__.codeMirror.getValue())], {type: "application/octet-stream"});
         openDownloadDialog(blob, "WebSQLiteDataView.sql");
     };
-    sqltools.appendChild(saveas);
+    paramtools.appendChild(saveas);
 
     var execsql = document.createElement("div");
     execsql.type = "div";
@@ -891,7 +935,7 @@ function init() {
             execute();
         }
     };
-    sqltools.appendChild(execsql);
+    paramtools.appendChild(execsql);
 
     var tofull = document.createElement("div");
     sqltools.appendChild(tofull);
@@ -1129,8 +1173,8 @@ function init() {
             var mecharts = document.createElement("div");
             mecharts.className = "echarts";
             mecharts.id = "echarts-full-screen";
-            mecharts.style.width = (getAbsolutePosition($("page")).width - 10) + "px";
-            mecharts.style.height = getAbsolutePosition($("page")).height + "px";
+            mecharts.style.width = (getAbsolutePosition($("container")).width - 10) + "px";
+            mecharts.style.height = getAbsolutePosition($("container")).height + "px";
             mecharts.style.top = "0px";
             mecharts.style.left = "0px";
             window.addEventListener("keydown", function (e) {
@@ -1141,8 +1185,8 @@ function init() {
                         $("echarts-full-screen").parentElement.removeChild($("echarts-full-screen"));
                 }
             });
-            mecharts.appendChild(getEcharts(__DATASET__.echarts.type, (getAbsolutePosition($("page")).width - 30) + "px", (getAbsolutePosition($("page")).height - 20) + "px", __DATASET__.echarts.theme));
-            $("page").appendChild(mecharts);
+            mecharts.appendChild(getEcharts(__DATASET__.echarts.type, (getAbsolutePosition($("container")).width - 30) + "px", (getAbsolutePosition($("container")).height - 20) + "px", __DATASET__.echarts.theme));
+            $("container").appendChild(mecharts);
         } catch (e) {
             console.log(e);
         }
@@ -1159,9 +1203,9 @@ function init() {
     tip.innerHTML = "更多图形参数";
     toconfigs.appendChild(tip);
     toconfigs.onclick = function () {
-        var posi = getAbsolutePosition($("MainContainer"));
+        var posi = getAbsolutePosition($("container"));
         var configs = getEchartsConfigs($("tableContainer"));
-        var main = $("page");
+        var main = $("container");
         configs.style.top = posi.top + "px";
         configs.style.lef = posi.left + "px";
         main.appendChild(configs);
@@ -1227,12 +1271,12 @@ function init() {
         }
     };
 
+   getFunctionConfigs($("paramContainer"));
+
     //#######################################
     //配置脚本编辑器
     //#######################################
-    $("sqlediter").style.width = (getAbsolutePosition($("sqlContainer")).width - 2) + "px";
-    __FUNCTION_EDITOR__.init($("sqlediter"));
-
+    __FUNCTION_EDITOR__.init($("Editer"));
     resize();
     window.onresize = function () {
         resize();
@@ -1263,15 +1307,13 @@ function resize() {
     //#######################################
     //由于使用百分比设置节点大小容易造成屏幕跳动，将节点大小调整为绝对值.
     //#######################################
-    $("page").style.width = (getBrowserSize().width - 10) + "px";
-    $("page").style.height= (getBrowserSize().height - 30) + "px";
+    $("container").style.width = (getBrowserSize().width - 15) + "px";
+    $("container").style.height= (getBrowserSize().height - 30) + "px";
+    $("menu").style.height =$("content").style.height = (getBrowserSize().height - getAbsolutePosition($("header")).height - getAbsolutePosition($("footer")).height - 36) + "px";
+    $("params").style.height = (getAbsolutePosition($("menu")).height - getAbsolutePosition($("editer")).height) + "px";
     $("header").style.width = $("footer").style.width =(getBrowserSize().width - 15) + "px";
-    $("MainContainer").style.height = (getBrowserSize().height - getAbsolutePosition($("header")).height - getAbsolutePosition($("footer")).height - 32) + "px";
-    $("main").style.width = (getBrowserSize().width - 15) + "px";
-    $("tableContainer").style.height = (getAbsolutePosition($("main")).height -
-            getAbsolutePosition($("sql-tools")).height -
-            getAbsolutePosition($("sqlContainer")).height-
-            getAbsolutePosition($("data-tools")).height) + "px";
+    $("tableContainer").style.height = (getAbsolutePosition($("tableContainer").parentElement).height - 36) + "px";
+
 }
 
 function isScroll(el) {

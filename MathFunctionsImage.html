@@ -44,44 +44,36 @@
 </head>
 
 <body onload="init()">
-    <div class="page" id="page">
-        <div class="header" id="header">
-            <div id="title">
-                <h1 style ='margin-bottom: 0px'>Math function Image<span style ='margin-left: 20px;font-size: 50%;color: lightseagreen'></span></h1>
-                <h7 style ='margin-top: 0px;color: deeppink'><a href = 'https://github.com/yangkai-bj/MathfunctionImage.git' target="_blank">https://github.com/yangkai-bj/MathfunctionImage.git</a>.</h7>
-            </div>
-        </div>
-        <div class="MainContainer" id = "MainContainer">
-            <div id ="main" class="main" id="main">
-                <div id="sql-tools" class="toolbar">
-                    </div>
-                <div id="sqlContainer" class="sqlContainer">
-                    <textarea class = "sqlediter" id = "sqlediter"></textarea>
-                </div>
-                 <div id="data-tools" class="toolbar">
-                    </div>
-                <div id="tableContainer" class="tableContainer">
-
-                </div>
-            </div>
-        </div>
-        <div class="footer" id="footer">
-            <div class = "dts" id="dts">
-                <h7>
-                    技术说明:
-                    <dl>
-                        <dt>1.采用HTML5技术开发，开发和测试环境使用Google Chrome浏览器，其他浏览器未测试。</dt>
-                        <dt>2.函数编辑由CodeMirror提供支持,详细见https://codemirror.net.</dt>
-                        <dt>3.数据视图由Apache Echarts提供支持，详细见https://echarts.apache.org/zh/index.html。</dt>
-                        <dt>4.回归曲线计算由Echarts-stat提供支持,详细见https://github.com/ecomfe/echarts-stat。</dt>
-                        <dt>5.Xlsx文件处理由SheetJS提供支持,详细见http://sheetjs.com.</dt>
-                        <dt>6.如需了解项目更多技术细节或源代码，可登录<a href = 'https://github.com/yangkai-bj/MathfunctionImage.git' target="_blank">https://github.com/yangkai-bj/MathfunctionImage.git</a>.</dt>
-                    </dl>
-                    应用开发:杨凯 ☎ (010)63603329 ✉ <a href="mailto:yangkai.bj@ccb.com">yangkai.bj@ccb.com</a>
-                </h7>
-            </div>
+<div id="container" style="width:100%;height: 100%">
+<div id="header" style="height:60px">
+    <h1 style ='margin-bottom: 0px'>Math function Image<span style ='margin-left: 20px;font-size: 50%;color: lightseagreen'></span></h1>
+    <h7 style ='margin-top: 0px;color: deeppink'><a href = 'https://github.com/yangkai-bj/MathfunctionImage.git' target="_blank">https://github.com/yangkai-bj/MathfunctionImage.git</a>.</h7>
+</div>
+<div id="menu" style="height:800px;width:30%;float:left;background-color:rebeccapurple">
+    <div id ="editer" class="editer" style="height:300px;width:100%;float:left;">
+        <div id="editer-tools" class="toolbar"></div>
+        <div id="editerContainer" class="editerContainer" style="height:264px;width:100%;float:left">
+            <textarea class = "Editer" id = "Editer"></textarea>
         </div>
     </div>
+    <div id ="params" class="params" style="height:500px;width:100%;float:left;">
+         <div id="params-tools" class="toolbar"></div>
+         <div id="paramContainer" class="paramContainer" style="width:100%;height:100%;color:white">
+
+        </div>
+    </div>
+</div>
+<div id="content" style="background-color:#EEEEEE;height:800px;width:70%;float:left;">
+    <div id="data-tools" class="toolbar"></div>
+    <div id="tableContainer" class="tableContainer">
+
+    </div>
+</div>
+<div id="footer" style="background-color:#FFA500;clear:both;text-align:center;height: 20px">
+应用开发:杨凯 ☎ (010)63603329 ✉ <a href="mailto:yangkai.bj@ccb.com">yangkai.bj@ccb.com</a>
+</div>
+
+</div>
 <script>
 
 </script>
