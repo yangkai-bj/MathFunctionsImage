@@ -602,11 +602,16 @@ function execute() {
         __DATASET__["result"] = [];
         var data = [];
         for (var x = __DATASET__.xRange.min.value; x <= __DATASET__.xRange.max.value; x += __DATASET__.xRange.interval.value) {
-            var row = [x];
-            for (var s = 0; s < funs.length; s++) {
-                row.push(eval("(" + funs[s].toString() + ")"));
-            }
-            data.push(row);
+                var row = [x];
+                for (var s = 0; s < funs.length; s++) {
+                    try {
+                        if (funs[s].toString().trim() != "")
+                            row.push(eval("(" + funs[s].toString() + ")"));
+                    }catch (e) {
+                        console.log(e);
+                    }
+                }
+                data.push(row);
         }
         __DATASET__["result"].push(transferResultDataset(funs, data));
         if (__DATASET__["result"].length > 0) {
