@@ -180,7 +180,7 @@ function getAbsolutePosition(obj)
 
 function isNumber(str) {
     //用于判断字符串是否是符合数字
-    var reg = new RegExp(/^([-+])?\d+(\.[0-9]{1,9})?$/)
+    var reg = new RegExp(/^([-+])?\d+(\.[0-9]{1,16})?$/)
     //var result = reg.exec(str);
     var result = str.match(reg,"g");
     var re = false;
@@ -234,10 +234,11 @@ function getDataType(str){
              return "datetime";
          else if (isIDnumber(str))
              return "nvarchar";
-         else if (isNumber(str) && isNaN(Number.parseInt(str)) == false && str.indexOf(".") == -1)
-             return "int";
-         else if (isNumber(str) && isNaN(Number.parseFloat(str)) == false)
-             return "float";
+         else if (isNumber(str))
+             if (isNaN(Number.parseInt(str)) == false && str.indexOf(".") == -1)
+                 return "int";
+             else
+                 return "float";
          else
              return "nvarchar"
      }
@@ -624,6 +625,8 @@ function execute() {
                         var f = fixFunction(funs[s].toString());
                         if (f.trim() != "")
                             row.push(eval("(" + f + ")"));
+                        else
+                            row.push(f);
                     }catch (e) {
                         row.push(f);
                         console.log(e + "\n" + funs[s].toString() + " -> " + f);
@@ -652,40 +655,40 @@ function transferResultDataset(funs, dataset){
     var data = [];
     for (var i=0;i<dataset.length;i++) {
         var row = {};
-         var r = dataset[i];
-         for (var c = 0; c < columns.length; c++) {
-             var _value = r[c];
-             var _type = getDataType(_value);
-             var _format  = null;
-             var _align = "left";
-             var _color = "black";
+        var r = dataset[i];
+        for (var c = 0; c < columns.length; c++) {
+            var _value = r[c];
+            var _type = getDataType(_value.toString());
+            var _format = null;
+            var _align = "left";
+            var _color = "black";
 
-             switch (_type) {
-                 case "float":
-                     _type = "number";
-                     _value = Number.parseFloat(r[c]);
-                     _format = "#,##0.######";
-                     _align = "right";
-                     break;
-                 case "int":
-                     _type = "number";
-                     _value = Number.parseInt(r[c]);
-                     _format = "#,##0.######";
-                     _align = "right";
-                     break;
-                 case "date":
-                     _format = "yyyy-MM-dd";
-                     _align = "center";
-                     break;
-                 case "datetime":
-                     _format = "yyyy-MM-dd hh:mm:ss";
-                     _align = "center";
-                     break;
+            switch (_type) {
+                case "float":
+                    _type = "number";
+                    _value = Number.parseFloat(r[c]);
+                    _format = "#,##0.################";
+                    _align = "right";
+                    break;
+                case "int":
+                    _type = "number";
+                    _value = Number.parseInt(r[c]);
+                    _format = "#,##0";
+                    _align = "right";
+                    break;
+                case "date":
+                    _format = "yyyy-MM-dd";
+                    _align = "center";
+                    break;
+                case "datetime":
+                    _format = "yyyy-MM-dd hh:mm:ss";
+                    _align = "center";
+                    break;
                 default:
                     _format = null;
                     _align = "left";
-             }
-            if (_type == "number" && _value <0 )
+            }
+            if (_type == "number" && _value < 0)
                 _color = "red";
 
             row[columns[c].name] = {
@@ -696,8 +699,8 @@ function transferResultDataset(funs, dataset){
                 format: _format,
                 style: {"text-align": _align, "color": _color},
             };
-         }
-         data.push(row);
+        }
+        data.push(row);
     }
     var result = {
         columns: columns,
@@ -1313,7 +1316,7 @@ function init() {
     var echarts = document.createElement("div");
     datatools.appendChild(echarts);
     echarts.className = "button";
-    echarts.innerText = "视图";
+    echarts.innerText = "绘制";
     echarts.style.cssFloat = "right";
     var tip = document.createElement("span");
     tip.className = "tooltiptext";
