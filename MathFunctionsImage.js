@@ -1337,6 +1337,7 @@ function init() {
     //配置函数编辑器
     //#######################################
     __FUNCTION_EDITOR__.init($("Editer"));
+    __FUNCTION_EDITOR__.codeMirror.setSize("100%","100%");
     resize();
     window.onresize = function () {
         resize();
