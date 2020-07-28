@@ -366,6 +366,12 @@ function getBar(container, themes) {
             left: 20,
             data: columns.slice(1, columns.length)
         },
+        grid: {
+            top: 40,
+            left: 50,
+            right: 40,
+            bottom: 50
+        },
         xAxis: {
             data: xAxis,
             axisLabel: {
@@ -475,7 +481,7 @@ function getTransversBar(container, themes) {
             data: columns.slice(1, columns.length)
         },
         xAxis: {
-        type: 'value'
+            type: 'value'
         },
         yAxis: {
             type: 'category',
@@ -4680,8 +4686,8 @@ function getFunctionLine(container, themes) {
         },
         yAxis: {
             name: 'y',
-            min: -100,
-            max: 100,
+            min: Number(__DATASET__.yRange.min.value),
+            max: Number(__DATASET__.yRange.max.value),
             minorTick: {
                 show: true
             },

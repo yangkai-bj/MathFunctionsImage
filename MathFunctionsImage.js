@@ -10,6 +10,10 @@ var __CONFIGS__ = {
          max: {name: "最大x值", value: 100},
          interval:{name: "x的间隔", value: 0.5},
      },
+     yRange:{
+         min: {name: "最小y值", value: -100},
+         max: {name: "最大y值", value: 100},
+     },
      time: "",
      result: [],
      default: 0,
@@ -74,6 +78,8 @@ var __CONFIGS__ = {
         "Shift-Ctrl-F 查找替换\n" +
         "Shift-Ctrl-R 查找全部并替换\n";
          this.codeMirror = CodeMirror.fromTextArea(textarea, this.options);
+         this.codeMirror.id = "CodeMirror";
+         this.codeMirror.className = "CodeMirror";
          var colors = ["#fcc", "#ccf", "#fcf", "#aff", "#cfc", "#f5f577"];
          var rulers = [];
          for (var i = 1; i <= 6; i++) {
@@ -258,8 +264,6 @@ function getTypeOf(d) {
      return type;
 }
 
-
-
 function checkStorage(){
     try {
         if (typeof window.localStorage !== "undefined")
@@ -270,7 +274,6 @@ function checkStorage(){
         return false;
     }
 }
-
 
 function getNow() {
     var date = new Date();
@@ -588,6 +591,19 @@ String.prototype.replaceAll = function(search, replacement) {
     return target;
 };
 
+function fixFunction(str) {
+    try {
+        var reg = RegExp(/(\d+|\))([a-zA-Z\(]+)/, "g");
+        var result = str.match(reg, "g");
+        for (var i = 0; i < result.length; i++) {
+            result[i].toString().match(reg, "g");
+            str = str.replace(result[i].toString(), RegExp.$1 + "*" + RegExp.$2);
+        }
+    } catch (e) {
+    }
+    return str;
+}
+
 function execute() {
     var selection = "";
     if (__FUNCTION_EDITOR__.codeMirror.somethingSelected())
@@ -605,10 +621,12 @@ function execute() {
                 var row = [x];
                 for (var s = 0; s < funs.length; s++) {
                     try {
-                        if (funs[s].toString().trim() != "")
-                            row.push(eval("(" + funs[s].toString() + ")"));
+                        var f = fixFunction(funs[s].toString());
+                        if (f.trim() != "")
+                            row.push(eval("(" + f + ")"));
                     }catch (e) {
-                        console.log(e);
+                        row.push(f);
+                        console.log(e + "\n" + funs[s].toString() + " -> " + f);
                     }
                 }
                 data.push(row);
@@ -769,11 +787,13 @@ function getFunctionConfigs(m) {
         d.style.width = "100%";
         m.appendChild(d);
         var s = document.createElement("span");
+        s.style.width = "35%";
         s.innerHTML = __DATASET__.xRange[name].name + ":";
         d.appendChild(s);
         if (typeof __DATASET__.xRange[name].options === "undefined") {
             var input = document.createElement("input");
             input.id = name;
+            input.style.width = "65%";
             input.className = "editinput";
             input.value = __DATASET__.xRange[name].value;
             input.onchange = function () {
@@ -784,6 +804,7 @@ function getFunctionConfigs(m) {
             var input = document.createElement("select");
             //input.style.cssFloat = "left";
             input.id = name;
+            input.style.width = "65%";
             input.className = "editinput";
             for (var i = 0; i < __DATASET__.xRange[name].options.length; i++) {
                 input.options.add(new Option(__DATASET__.xRange[name].options[i]));
@@ -795,8 +816,42 @@ function getFunctionConfigs(m) {
             d.appendChild(input);
         }
     }
-    var c = document.createElement("div");
-    m.appendChild(c);
+
+    for (var name in __DATASET__.yRange) {
+        var d = document.createElement("div");
+        d.style.cssFloat = "left";
+        d.style.width = "100%";
+        m.appendChild(d);
+        var s = document.createElement("span");
+        s.style.width = "35%";
+        s.innerHTML = __DATASET__.yRange[name].name + ":";
+        d.appendChild(s);
+        if (typeof __DATASET__.yRange[name].options === "undefined") {
+            var input = document.createElement("input");
+            input.id = name;
+            input.style.width = "65%";
+            input.className = "editinput";
+            input.value = __DATASET__.yRange[name].value;
+            input.onchange = function () {
+                __DATASET__.yRange[this.id].value = Number(this.value);
+            };
+            d.appendChild(input);
+        } else {
+            var input = document.createElement("select");
+            //input.style.cssFloat = "left";
+            input.id = name;
+            input.style.width = "65%";
+            input.className = "editinput";
+            for (var i = 0; i < __DATASET__.yRange[name].options.length; i++) {
+                input.options.add(new Option(__DATASET__.yRange[name].options[i]));
+            }
+            input.value = __DATASET__.yRange[name].value;
+            input.onchange = function () {
+                __DATASET__.yRange[this.id].value = Number(this.value);
+            };
+            d.appendChild(input);
+        }
+    }
 }
 
 function init() {
@@ -929,10 +984,10 @@ function init() {
     var execsql = document.createElement("div");
     execsql.type = "div";
     execsql.className = "button";
-    execsql.innerText = "执行";
+    execsql.innerText = "计算";
     var tip = document.createElement("span");
     tip.className = "tooltiptext";
-    tip.innerHTML = "执行函数并获<br>取图像";
+    tip.innerHTML = "执行函数并获<br>取数据";
     execsql.appendChild(tip);
 
     execsql.onclick = function () {
